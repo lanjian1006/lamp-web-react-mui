@@ -1,9 +1,8 @@
 import {Avatar, Badge, Breadcrumbs, IconButton, Link, TextField} from "@mui/material";
-import {Menu, Settings} from "@mui/icons-material";
+import {Menu, Settings, Notifications} from "@mui/icons-material";
 import DAppBar from "components/DAppBar/DAppBar";
 import DFlexBox from "components/DFlexBox/DFlexBox";
 import DSeparator from "components/DSeparator/DSeparator";
-import NotificationsIcon from '@mui/icons-material/Notifications';
 
 interface HomeBarProps {
 
@@ -47,8 +46,8 @@ export default function HomeBar(props: HomeBarProps) {
                 <TextField label={'搜索'} size={'small'}/>
                 <Avatar sx={{width: 24, height: 24}}>H</Avatar>
                 <Settings color={'secondary'}/>
-                <Badge badgeContent={4} color={'primary'}>
-                    <NotificationsIcon color={'secondary'}/>
+                <Badge badgeContent={0} color={'primary'}>
+                    <Notifications color={'secondary'}/>
                 </Badge>
             </DSeparator>
         </DFlexBox>
