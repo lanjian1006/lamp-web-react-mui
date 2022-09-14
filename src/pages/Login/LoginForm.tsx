@@ -12,6 +12,7 @@ import {Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Stack} f
 import {Formik} from "formik";
 import * as yup from 'yup';
 import {ResponseType} from "services/axios.config";
+import { AxiosPromise } from "axios";
 
 interface FormikFormProps {
     username?: string
@@ -37,15 +38,13 @@ export default function LoginForm() {
             return res.data
         })
     }
-    const userLogin = async (code: string, username: string, pasword: string) => {
+    const userLogin = async (code: string, username: string, pasword: string): Promise<ResponseType> => {
         const loginModel: LoginModel = {
             username: username,
             password: pasword,
             code: code
         }
-        return await login(loginModel, randomKey).then((res) => {
-            return res
-        })
+        return await login(loginModel, randomKey)
     }
     const handleCaptchaClose = () => {
         setShowCaptchaWarning(false)
@@ -69,13 +68,15 @@ export default function LoginForm() {
             captcha: yup.string().required('请输入验证码')
         })}
         onSubmit={async values => {
-            const loginResult = await userLogin(values.captcha, values.username, values.password)
-            // if(validateCode){
-            //
-            //
-            // } else {
-            //     setShowCaptchaWarning(true)
-            // }
+            userLogin(values.captcha, values.username, values.password).then(res => {
+                if(res.isSuccess){
+
+                } else {
+                    
+                }
+            }).catch(error => {
+                console.log(error);
+            })
         }}
     >
         {

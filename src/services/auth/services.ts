@@ -1,6 +1,7 @@
 import urls from './serviceUrls'
 import axios from '../axios.config'
 import {Base64} from "js-base64";
+import { AxiosPromise } from 'axios';
 
 export interface LoginModel {
     code?: string
@@ -34,7 +35,7 @@ const validateCode = (code: string, key: string) => {
     })
 }
 
-const login = (model: LoginModel, key: string) => {
+const login = (model: LoginModel, key: string): AxiosPromise<ResponseType>  => {
     const authentication =
         `${Base64.encode(`${process.env.REACT_ENV_VITE_GLOB_CLIENT_ID}:${process.env.REACT_APP_VITE_GLOB_CLIENT_SECRET}`)}`
     model.grantType = 'CAPTCHA'
@@ -42,9 +43,14 @@ const login = (model: LoginModel, key: string) => {
     const headers = {
         'Authorization': authentication
     }
-    return axios.post(urls.login, model, {
+
+    return axios({
+        method: 'post',
+        url: urls.login,
+        data: model,
         headers: headers
     })
+    
 }
 
 export {
