@@ -37,7 +37,7 @@ const validateCode = (code: string, key: string) => {
 
 const login = (model: LoginModel, key: string): AxiosPromise<ResponseType>  => {
     const authentication =
-        `${Base64.encode(`${process.env.REACT_ENV_VITE_GLOB_CLIENT_ID}:${process.env.REACT_APP_VITE_GLOB_CLIENT_SECRET}`)}`
+        `${Base64.encode(`${process.env.REACT_APP_VITE_GLOB_CLIENT_ID}:${process.env.REACT_APP_VITE_GLOB_CLIENT_SECRET}`)}`
     model.grantType = 'CAPTCHA'
     model.key = key
     const headers = {

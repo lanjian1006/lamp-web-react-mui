@@ -6,13 +6,14 @@ import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import DFlexBox from "components/DFlexBox/DFlexBox";
-import {useEffect, useState} from "react";
-import {getCaptcha, login, LoginModel, validateCode} from "services/auth/services";
-import {Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Stack} from "@mui/material";
-import {Formik} from "formik";
+import { useEffect, useState } from "react";
+import { getCaptcha, login, LoginModel, validateCode } from "services/auth/services";
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Stack } from "@mui/material";
+import { Formik } from "formik";
 import * as yup from 'yup';
-import {ResponseType} from "services/axios.config";
+import { ResponseType } from "services/axios.config";
 import { AxiosPromise } from "axios";
+import { setUser, store } from "stores/userStore";
 
 interface FormikFormProps {
     username?: string
@@ -23,7 +24,8 @@ interface FormikFormProps {
 export default function LoginForm() {
     const [imgSrc, setImgSrc] = useState<string>('')
     const [showCaptchaWarning, setShowCaptchaWarning] = useState<boolean>(false)
-    const [randomKey, setRandomKey] = useState<string>((Math.random() * 10**18).toFixed(0).toString())
+    const [warningMsg, setWarningMsg] = useState<string>('')
+    const [randomKey, setRandomKey] = useState<string>((Math.random() * 10 ** 18).toFixed(0).toString())
 
     const FormControlStyle: Object = {
         marginTop: '16px'
@@ -69,19 +71,22 @@ export default function LoginForm() {
         })}
         onSubmit={async values => {
             userLogin(values.captcha, values.username, values.password).then(res => {
-                if(res.isSuccess){
-
-                } else {
+                if (res.isSuccess) {
+                    store.dispatch(setUser(res.data))
                     
+                } else {
+                    setWarningMsg(res.msg ?? '')
+                    setShowCaptchaWarning(true)
                 }
             }).catch(error => {
-                console.log(error);
+                setWarningMsg(error.msg ?? '')
+                setShowCaptchaWarning(true)
             })
         }}
     >
         {
             formik => (
-                <Stack sx={{margin: '0 30px', padding: '40px 0'}}>
+                <Stack sx={{ margin: '0 30px', padding: '40px 0' }}>
                     <Dialog
                         open={showCaptchaWarning}
                         onClose={handleCaptchaClose}
@@ -93,7 +98,7 @@ export default function LoginForm() {
                         </DialogTitle>
                         <DialogContent>
                             {
-                                '验证码错误，请重新输入！'
+                                warningMsg
                             }
                         </DialogContent>
                         <DialogActions>
@@ -107,7 +112,7 @@ export default function LoginForm() {
                             fullWidth
                             key={'username'}
                             {...formik.getFieldProps('username')}
-                            error={Boolean(formik.errors.username) && formik.touched.username }
+                            error={Boolean(formik.errors.username) && formik.touched.username}
                             helperText={formik.touched.username && formik.errors.username}
                         />
                         <TextField
@@ -135,19 +140,19 @@ export default function LoginForm() {
                                 onClick={toGetCaptcha}
                                 src={imgSrc}
                                 alt='img'
-                                style={{width: '200px', height: '40px', marginLeft: '8px', cursor: 'pointer'}}
+                                style={{ width: '200px', height: '40px', marginLeft: '8px', cursor: 'pointer' }}
                             />
                         </DFlexBox>
                         <FormControl
-                            sx={{margin: '8px 0'}}
+                            sx={{ margin: '8px 0' }}
                         >
                             <FormControlLabel
-                                sx={{color: '#888'}}
+                                sx={{ color: '#888' }}
                                 key={'remember_me'}
                                 label={'记住我'}
                                 control={
                                     <Switch/>
-                                }/>
+                                } />
                         </FormControl>
                         <Button
                             variant='contained'
