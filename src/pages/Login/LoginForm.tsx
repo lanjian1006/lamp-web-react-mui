@@ -12,8 +12,8 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Stack }
 import { Formik } from "formik";
 import * as yup from 'yup';
 import { ResponseType } from "services/axios.config";
-import { AxiosPromise } from "axios";
 import { setUser, store } from "stores/userStore";
+import { useNavigate, redirect } from "react-router-dom";
 
 interface FormikFormProps {
     username?: string
@@ -26,6 +26,7 @@ export default function LoginForm() {
     const [showCaptchaWarning, setShowCaptchaWarning] = useState<boolean>(false)
     const [warningMsg, setWarningMsg] = useState<string>('')
     const [randomKey, setRandomKey] = useState<string>((Math.random() * 10 ** 18).toFixed(0).toString())
+    const navigate = useNavigate()
 
     const FormControlStyle: Object = {
         marginTop: '16px'
@@ -73,7 +74,7 @@ export default function LoginForm() {
             userLogin(values.captcha, values.username, values.password).then(res => {
                 if (res.isSuccess) {
                     store.dispatch(setUser(res.data))
-                    
+                    navigate("/")
                 } else {
                     setWarningMsg(res.msg ?? '')
                     setShowCaptchaWarning(true)
